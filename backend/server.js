@@ -37,12 +37,16 @@ const academicContentRoutes = require('./routes/academicContentRoutes');
 const internalMarksRoutes = require('./routes/internalMarksRoutes');
 const timetableRoutes = require('./routes/timetableRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+const institutionRoutes = require('./routes/institutionRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/faculty', facultyRoutes);
 app.use('/api/period-slots', periodSlotsRoutes);
 app.use('/api/subjects', subjectsRoutes);
-app.use('/api/hourly-attendance', hourlyAttendanceRoutes);
+app.use('/api/attendance', hourlyAttendanceRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/institution', institutionRoutes);
 app.use('/api/academic-content', academicContentRoutes);
 app.use('/api/internal-marks', internalMarksRoutes);
 app.use('/api/timetable', timetableRoutes);

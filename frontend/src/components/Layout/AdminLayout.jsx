@@ -1,7 +1,8 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LayoutDashboard, Users, BookOpen, Clock, FileText, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, Clock, FileText, Settings, LogOut, MessageSquare, ChevronRight, Building2, GraduationCap, Layers } from 'lucide-react';
+
 
 const AdminLayout = () => {
     const { user, logout } = useAuth();
@@ -11,50 +12,82 @@ const AdminLayout = () => {
     if (!user) return null;
 
     return (
-        <div className="flex h-screen bg-app">
-            {/* Sidebar */}
-            <aside className="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full z-10 transition-all duration-300">
-                <div className="p-6 border-b border-gray-100 flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center text-white font-bold">P</div>
-                    <span className="font-display font-semibold text-lg text-gray-900">Pydah Portal</span>
+        <div className="admin-layout">
+            {/* Sidebar - Premium Dark/Olive Theme */}
+            <aside className="sidebar">
+                {/* Logo Area */}
+                <div className="sidebar-header">
+                    <div className="logo-box">P</div>
+                    <div>
+                        <h1 className="font-display" style={{ fontSize: '18px', margin: 0, lineHeight: 1, color: 'white' }}>Pydah</h1>
+                        <p style={{ fontSize: '10px', color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '2px', marginTop: '4px' }}>Portal V2</p>
+                    </div>
                 </div>
 
-                <nav className="flex-1 p-4 overflow-y-auto">
-                    <ul className="flex flex-col gap-1">
-                        <li>
-                            <Link to="/admin/dashboard" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${location.pathname === '/admin/dashboard' ? 'bg-primary-50 text-primary-600' : 'text-gray-600 hover:bg-gray-50'}`}>
-                                <LayoutDashboard size={20} />
-                                <span className="font-medium">Dashboard</span>
+                {/* Navigation */}
+                <nav className="nav-section custom-scrollbar">
+                    <div style={{ marginBottom: '24px' }}>
+                        <p className="nav-label">Main Menu</p>
+                        <div className="flex-col gap-2">
+                            <Link to="/admin/dashboard" className={`nav-item ${location.pathname === '/admin/dashboard' ? 'active' : ''}`}>
+                                <LayoutDashboard size={18} />
+                                <span>Dashboard</span>
                             </Link>
-                        </li>
-                        <li>
-                            <Link to="/admin/faculty" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${location.pathname.includes('/admin/faculty') ? 'bg-primary-50 text-primary-600' : 'text-gray-600 hover:bg-gray-50'}`}>
-                                <Users size={20} />
-                                <span className="font-medium">Faculty</span>
+                            <Link to="/admin/faculty" className={`nav-item ${location.pathname.includes('/admin/faculty') ? 'active' : ''}`}>
+                                <Users size={18} />
+                                <span>Faculty</span>
                             </Link>
-                        </li>
-                        <li>
-                            <a href="#" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50">
-                                <BookOpen size={20} />
-                                <span className="font-medium">Academics</span>
-                            </a>
-                        </li>
-                    </ul>
+                            <Link to="/admin/attendance" className={`nav-item ${location.pathname.includes('/admin/attendance') ? 'active' : ''}`}>
+                                <Clock size={18} />
+                                <span>Attendance</span>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '24px' }}>
+                        <p className="nav-label">Institution</p>
+                        <div className="flex-col gap-2">
+                            <Link to="/admin/colleges" className={`nav-item ${location.pathname.includes('/admin/colleges') ? 'active' : ''}`}>
+                                <Building2 size={18} />
+                                <span>Colleges</span>
+                            </Link>
+                            <Link to="/admin/programs" className={`nav-item ${location.pathname.includes('/admin/programs') ? 'active' : ''}`}>
+                                <GraduationCap size={18} />
+                                <span>Programs</span>
+                            </Link>
+                            <Link to="/admin/batches" className={`nav-item ${location.pathname.includes('/admin/batches') ? 'active' : ''}`}>
+                                <Layers size={18} />
+                                <span>Batches</span>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '24px' }}>
+                        <p className="nav-label">Academics</p>
+                        <div className="flex-col gap-2">
+                            <Link to="/admin/subjects" className={`nav-item ${location.pathname.includes('/admin/subjects') ? 'active' : ''}`}>
+                                <BookOpen size={18} />
+                                <span>Subjects</span>
+                            </Link>
+                        </div>
+                    </div>
                 </nav>
 
-                <div className="p-4 border-t border-gray-100">
-                    <div className="flex items-center gap-3 px-3 py-2 mb-2">
-                        <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-sm">
+                {/* User Profile */}
+                <div className="user-profile">
+                    <div className="profile-card">
+                        <div className="logo-box" style={{ width: '32px', height: '32px', background: 'var(--primary-700)', fontSize: '14px' }}>
                             {user.name ? user.name.charAt(0).toUpperCase() : 'A'}
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-                            <p className="text-xs text-gray-500 truncate">{user.role}</p>
+                        <div style={{ flex: 1, overflow: 'hidden' }}>
+                            <p style={{ fontSize: '14px', fontWeight: 600, color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0 }}>{user.name}</p>
+                            <p style={{ fontSize: '11px', color: 'var(--gray-400)', margin: 0, textTransform: 'capitalize' }}>{user.role.replace('_', ' ')}</p>
                         </div>
                     </div>
                     <button
                         onClick={logout}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="btn w-full"
+                        style={{ marginTop: '12px', background: 'transparent', border: '1px solid rgba(220, 38, 38, 0.3)', color: '#fca5a5', fontSize: '13px', padding: '8px' }}
                     >
                         <LogOut size={16} />
                         <span>Sign Out</span>
@@ -63,8 +96,8 @@ const AdminLayout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 ml-64 p-8 overflow-y-auto h-screen bg-gray-50">
-                <div className="container mx-auto">
+            <main className="main-content">
+                <div className="container animate-fade-in">
                     <Outlet />
                 </div>
             </main>

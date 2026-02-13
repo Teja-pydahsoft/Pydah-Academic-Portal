@@ -1,58 +1,97 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Lock, User } from 'lucide-react';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         const success = await login(username, password);
         if (success) {
-            // Redirect based on role
-            navigate('/admin/dashboard'); // Default for now
+            navigate('/admin/dashboard');
         }
+        setIsLoading(false);
     };
 
     return (
-        <div className="flex justify-center items-center h-screen" style={{ backgroundColor: 'var(--primary-50)' }}>
-            <div className="card w-full" style={{ maxWidth: '400px' }}>
-                <div className="flex justify-center mb-4">
-                    <div style={{ width: '60px', height: '60px', backgroundColor: 'var(--primary-500)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>P</span>
-                    </div>
+        <div className="login-page">
+            {/* Left Panel - Hero */}
+            <div className="login-hero">
+                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop" className="hero-bg-image" alt="Campus" />
+                <div className="hero-overlay"></div>
+
+                <div className="hero-content">
+                    <div className="hero-logo">P</div>
+                    <h1 className="hero-title">
+                        Academic <br /> <span style={{ color: 'var(--accent-400)' }}>Excellence</span>
+                    </h1>
+                    <p className="hero-subtitle">
+                        Welcome to the next generation academic portal. Manage attendance, track performance, and connect with faculty in one seamless workspace.
+                    </p>
                 </div>
-                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', color: 'var(--primary-900)' }}>Pydah Academic Portal</h2>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <div>
-                        <label className="label">Username</label>
-                        <input
-                            type="text"
-                            className="input-field"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter your username"
-                            required
-                        />
+            </div>
+
+            {/* Right Panel - Login Form */}
+            <div className="login-form-container">
+                <div className="login-card">
+                    <div className="text-center mb-8">
+                        <h2 style={{ fontFamily: 'Playfair Display', fontSize: '2rem', marginBottom: '0.5rem', color: 'var(--primary-900)' }}>Welcome Back</h2>
+                        <p style={{ color: 'var(--gray-500)' }}>Sign in to access your dashboard</p>
                     </div>
-                    <div>
-                        <label className="label">Password</label>
-                        <input
-                            type="password"
-                            className="input-field"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="btn-primary w-full mt-4">
-                        Sign In
-                    </button>
-                </form>
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label className="form-label">Username</label>
+                            <div className="input-wrapper">
+                                <User size={20} className="input-icon" />
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    placeholder="Enter your ID"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Password</label>
+                            <div className="input-wrapper">
+                                <Lock size={20} className="input-icon" />
+                                <input
+                                    type="password"
+                                    className="form-input"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="btn btn-primary w-full"
+                            disabled={isLoading}
+                            style={{ marginTop: '1rem' }}
+                        >
+                            {isLoading ? 'Signing In...' : 'Sign In'}
+                            {!isLoading && <ArrowRight size={18} />}
+                        </button>
+                    </form>
+
+                    <p className="text-center mt-8 text-sm text-gray-400">
+                        &copy; 2025 Pydah Educational Academy.
+                    </p>
+                </div>
             </div>
         </div>
     );

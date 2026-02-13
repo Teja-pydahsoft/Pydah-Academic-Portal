@@ -10,6 +10,7 @@ const AdminLayout = lazy(() => import('./components/Layout/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const FacultyManagement = lazy(() => import('./pages/admin/FacultyManagement'));
 const AttendanceMonitoring = lazy(() => import('./pages/admin/AttendanceMonitoring'));
+const Institution = lazy(() => import('./pages/admin/Institution'));
 
 function PrivateRoute({ children, allowedRoles }) {
     const { user, loading } = useAuth();
@@ -37,6 +38,10 @@ function App() {
                         <Route path="dashboard" element={<AdminDashboard />} />
                         <Route path="faculty" element={<FacultyManagement />} />
                         <Route path="attendance" element={<AttendanceMonitoring />} />
+                        <Route path="institution" element={<Institution />} />
+                        <Route path="colleges" element={<Institution initialTab="colleges" />} />
+                        <Route path="programs" element={<Institution initialTab="programs" />} />
+                        <Route path="batches" element={<Institution initialTab="batches" />} />
                     </Route>
 
                     <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
