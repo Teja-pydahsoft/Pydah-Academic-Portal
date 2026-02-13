@@ -47,17 +47,9 @@ const AdminLayout = () => {
                     <div style={{ marginBottom: '24px' }}>
                         <p className="nav-label">Institution</p>
                         <div className="flex-col gap-2">
-                            <Link to="/admin/colleges" className={`nav-item ${location.pathname.includes('/admin/colleges') ? 'active' : ''}`}>
+                            <Link to="/admin/institution" className={`nav-item ${location.pathname.includes('/admin/institution') ? 'active' : ''}`}>
                                 <Building2 size={18} />
-                                <span>Colleges</span>
-                            </Link>
-                            <Link to="/admin/programs" className={`nav-item ${location.pathname.includes('/admin/programs') ? 'active' : ''}`}>
-                                <GraduationCap size={18} />
-                                <span>Programs</span>
-                            </Link>
-                            <Link to="/admin/batches" className={`nav-item ${location.pathname.includes('/admin/batches') ? 'active' : ''}`}>
-                                <Layers size={18} />
-                                <span>Batches</span>
+                                <span>Institution</span>
                             </Link>
                         </div>
                     </div>
