@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, BookOpen, Calendar, Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
+import Skeleton from '../../components/ui/Skeleton';
 
 const StatCard = ({ title, value, icon: Icon, colorClass, trend }) => (
     <div className="stat-card">
@@ -24,6 +25,69 @@ const StatCard = ({ title, value, icon: Icon, colorClass, trend }) => (
     </div>
 );
 
+const DashboardSkeleton = () => {
+    return (
+        <div>
+            {/* Header Skeleton */}
+            <div className="dashboard-header" style={{ marginBottom: '2rem' }}>
+                <div>
+                    <Skeleton className="mb-2" width={200} height={40} style={{ marginBottom: '0.5rem' }} />
+                    <Skeleton width={300} height={20} />
+                </div>
+                <Skeleton width={150} height={32} style={{ borderRadius: '9999px' }} />
+            </div>
+
+            {/* Stat Grid Skeleton */}
+            <div className="stat-grid" style={{ marginBottom: '2.5rem' }}>
+                {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
+                        <div className="flex" style={{ justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                            <Skeleton variant="rectangular" width={48} height={48} style={{ borderRadius: '12px' }} />
+                        </div>
+                        <div>
+                            <Skeleton width={60} height={36} style={{ marginBottom: '0.5rem' }} />
+                            <Skeleton width={100} height={16} />
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Content Grid Skeleton */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+                {/* Recent Activities Skeleton */}
+                <div className="card">
+                    <div className="flex" style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '1rem' }}>
+                        <Skeleton width={180} height={28} />
+                        <Skeleton width={80} height={24} style={{ borderRadius: '9999px' }} />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="flex" style={{ alignItems: 'flex-start', gap: '1rem', padding: '0.75rem', border: '1px solid transparent' }}>
+                                <Skeleton variant="circular" width={40} height={40} />
+                                <div className="flex-1" style={{ flex: 1 }}>
+                                    <Skeleton width="80%" height={20} style={{ marginBottom: '0.5rem' }} />
+                                    <Skeleton width="40%" height={16} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Department Overview Skeleton */}
+                <div className="card">
+                    <div className="flex" style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '1rem' }}>
+                        <Skeleton width={200} height={28} />
+                        <Skeleton width={150} height={36} />
+                    </div>
+                    <div style={{ height: '16rem', borderRadius: '0.75rem', border: '2px dashed #e5e7eb', padding: '1rem' }}>
+                        <Skeleton className="w-full h-full" style={{ width: '100%', height: '100%', borderRadius: '0.5rem' }} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const Dashboard = () => {
     const { user } = useAuth();
     const [stats, setStats] = useState({
@@ -34,19 +98,33 @@ const Dashboard = () => {
         attendance: 0
     });
 
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
         const fetchStats = async () => {
             try {
+                // Determine if we need to show skeleton (e.g. initial load)
+                setIsLoading(true);
                 const response = await api.get('/dashboard/stats');
                 if (response.data.success) {
                     setStats(response.data.data);
                 }
             } catch (error) {
                 console.error('Failed to fetch dashboard stats', error);
+            } finally {
+                // Add a small delay to show off the skeleton if response is too fast, 
+                // or just set it to false immediately. 
+                // For "advanced" feel, we might want to ensure it shows for at least 500ms
+                // But for responsiveness, immediate is better. Let's do immediate.
+                setIsLoading(false);
             }
         };
         fetchStats();
     }, []);
+
+    if (isLoading) {
+        return <DashboardSkeleton />;
+    }
 
     return (
         <div>

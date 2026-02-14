@@ -1,0 +1,43 @@
+/* Skeleton.css */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton {
+    background: #e2e8f0;
+    /* gray-200 base */
+    background: linear-gradient(90deg,
+            #e2e8f0 0%,
+            #f8fafc 50%,
+            /* lighter shimmer center */
+            #e2e8f0 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 0.5rem;
+    /* rounded-lg default */
+    display: block;
+}
+
+
+
+/* Variants */
+.skeleton-text {
+    height: 1em;
+    width: 100%;
+    margin-bottom: 0.5em;
+    border-radius: 0.25rem;
+}
+
+.skeleton-circular {
+    border-radius: 50%;
+}
+
+/* Rectangular variant uses default styles */
+
+/* Specific Sizes/Shapes utilities can be added here or passed via style */

@@ -121,6 +121,15 @@ h6 {
   width: 100%;
 }
 
+.w-64 {
+  width: 16rem;
+  /* 256px */
+}
+
+.h-auto {
+  height: auto;
+}
+
 /* --- Component: Login Page --- */
 
 .login-page {
