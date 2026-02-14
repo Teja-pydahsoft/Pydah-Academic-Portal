@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
-import { Building2, Search, GraduationCap, Layers } from 'lucide-react';
+import { Building2, Search, GraduationCap, Layers, GitBranch, ChevronRight, User } from 'lucide-react';
+import './Institution.css';
 
 const Institution = ({ initialTab = 'colleges' }) => {
     const [activeTab, setActiveTab] = useState(initialTab);
-    const [data, setData] = useState({ colleges: [], courses: [], batches: [] });
+    const [data, setData] = useState({ colleges: [], courses: [], batches: [], branches: [] });
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Sync tab when prop changes (navigation)
     useEffect(() => {
@@ -31,10 +33,7 @@ const Institution = ({ initialTab = 'colleges' }) => {
     const TabButton = ({ id, label, icon: Icon }) => (
         <button
             onClick={() => setActiveTab(id)}
-            className={`flex items-center gap-2 px-5 py-2.5 font-medium text-sm rounded-lg transition-all duration-200 ${activeTab === id
-                    ? 'bg-primary-900 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
+            className={`tab-button ${activeTab === id ? 'active' : ''}`}
         >
             <Icon size={18} />
             {label}
@@ -42,61 +41,99 @@ const Institution = ({ initialTab = 'colleges' }) => {
     );
 
     const renderContent = () => {
-        const items = activeTab === 'colleges' ? data.colleges
-            : activeTab === 'programs' ? data.courses
-                : data.batches;
-
-        const getIconInfo = () => {
-            if (activeTab === 'colleges') return { icon: Building2, bg: 'bg-blue-50', text: 'text-blue-600' };
-            if (activeTab === 'programs') return { icon: GraduationCap, bg: 'bg-purple-50', text: 'text-purple-600' };
-            return { icon: Layers, bg: 'bg-orange-50', text: 'text-orange-600' };
+        const getActiveData = () => {
+            switch (activeTab) {
+                case 'colleges': return data.colleges || [];
+                case 'programs': return data.courses || [];
+                case 'branches': return data.branches || [];
+                case 'batches': return data.batches || [];
+                default: return [];
+            }
         };
 
-        const { icon: Icon, bg, text } = getIconInfo();
-        const title = activeTab === 'colleges' ? 'Colleges'
-            : activeTab === 'programs' ? 'Programs'
-                : 'Batches';
+        const allItems = getActiveData();
+        const items = allItems.filter(item =>
+            item.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        const getThemeClass = () => {
+            switch (activeTab) {
+                case 'colleges': return 'theme-colleges';
+                case 'programs': return 'theme-programs';
+                case 'branches': return 'theme-branches';
+                case 'batches': return 'theme-batches';
+                default: return '';
+            }
+        };
+
+        const getIcon = () => {
+            switch (activeTab) {
+                case 'colleges': return Building2;
+                case 'programs': return GraduationCap;
+                case 'branches': return GitBranch;
+                case 'batches': return Layers;
+                default: return Layers;
+            }
+        };
+
+        const Icon = getIcon();
+        const themeClass = getThemeClass();
+        const title = activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
 
         if (loading) return (
-            <div className="flex justify-center items-center h-64">
-                <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '16rem' }}>
+                <div style={{ width: '3rem', height: '3rem', border: '4px solid #e5e7eb', borderTopColor: '#3D4127', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
             </div>
         );
 
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in pb-8">
+            <div className="institution-grid anim-fade-in">
                 {items.length > 0 ? (
                     items.map((item, index) => (
-                        <div key={index} className="group bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer relative overflow-hidden">
-                            <div className={`absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-5 group-hover:scale-150 transition-transform duration-500 ${bg.replace('50', '500')}`}></div>
+                        <div key={index} className={`institution-card ${themeClass}`}>
+                            {/* Background Decoration */}
+                            <div className="card-bg-decoration"></div>
 
-                            <div className="flex items-start justify-between relative z-10">
-                                <div className={`w-14 h-14 rounded-2xl ${bg} ${text} flex items-center justify-center shadow-inner mb-4 group-hover:rotate-6 transition-transform`}>
-                                    <Icon size={28} />
+                            <div className="card-header">
+                                <div className="icon-box">
+                                    <Icon size={24} strokeWidth={2} />
                                 </div>
-                                <span className="px-2 py-1 bg-gray-50 text-xs font-semibold text-gray-500 rounded-md border border-gray-100">
+                                <span className="id-badge">
                                     ID: {index + 1}
                                 </span>
                             </div>
 
-                            <div className="relative z-10">
-                                <h3 className="text-lg font-bold text-gray-900 leading-tight mb-2 group-hover:text-primary-600 transition-colors font-display">
+                            <div className="card-content">
+                                <h3 className="card-title">
                                     {item.name}
                                 </h3>
-                                <div className="flex items-center gap-2 text-sm text-gray-500">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                    <span className="font-medium">{item.student_count} Students</span>
+
+                                <div className="card-footer">
+                                    <div className="student-count">
+                                        <User size={14} />
+                                        <span>{item.student_count?.toLocaleString()}</span>
+                                        <span className="count-label">Students</span>
+                                    </div>
+
+                                    <div className="arrow-icon">
+                                        <ChevronRight size={16} strokeWidth={2.5} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <div className="col-span-full py-12 flex flex-col items-center justify-center text-center bg-white rounded-2xl border border-dashed border-gray-200">
-                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 text-gray-400">
-                            <Icon size={32} />
+                    <div className="empty-state">
+                        <div className={`icon-box ${themeClass}`} style={{ marginBottom: '1rem', width: '4rem', height: '4rem' }}>
+                            <Icon size={32} strokeWidth={1.5} />
                         </div>
-                        <h3 className="text-gray-900 font-medium text-lg mb-1">No {title.toLowerCase()} found</h3>
-                        <p className="text-gray-500 max-w-sm">Try adjusting your search or add new {title.toLowerCase()} to get started.</p>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--gray-900)', marginBottom: '0.5rem' }}>
+                            No {title.toLowerCase()} found
+                        </h3>
+                        <p style={{ color: 'var(--gray-500)' }}>
+                            Try adjusting your search for "{searchTerm}"
+                        </p>
                     </div>
                 )}
             </div>
@@ -104,30 +141,33 @@ const Institution = ({ initialTab = 'colleges' }) => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div className="institution-container">
+            <div className="institution-header">
                 <div>
-                    <h1 className="text-4xl font-bold text-gray-900 font-display mb-2">Institution</h1>
-                    <p className="text-gray-500 text-lg">Manage colleges, programs, and batches.</p>
+                    <h1 className="institution-title">Institution</h1>
+                    <p className="institution-subtitle">Overview of all institutional entities.</p>
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-2 mb-8">
-                <div className="flex flex-col md:flex-row justify-between gap-4 p-2">
-                    <div className="flex bg-gray-50 p-1.5 rounded-xl gap-1 overflow-x-auto">
-                        <TabButton id="colleges" label="Colleges" icon={Building2} />
-                        <TabButton id="programs" label="Programs" icon={GraduationCap} />
-                        <TabButton id="batches" label="Batches" icon={Layers} />
-                    </div>
+            <div className="institution-controls">
+                <div className="tabs-container">
+                    <TabButton id="colleges" label="Colleges" icon={Building2} />
+                    <TabButton id="programs" label="Programs" icon={GraduationCap} />
+                    <TabButton id="branches" label="Branches" icon={GitBranch} />
+                    <TabButton id="batches" label="Batches" icon={Layers} />
+                </div>
 
-                    <div className="relative w-full md:w-80">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                        <input
-                            type="text"
-                            placeholder={`Search ${activeTab}...`}
-                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary-100 focus:bg-white transition-all text-gray-900 placeholder-gray-400"
-                        />
+                <div className="search-container">
+                    <div className="search-icon">
+                        <Search size={18} />
                     </div>
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder={`Search ${activeTab}...`}
+                        className="search-input"
+                    />
                 </div>
             </div>
 

@@ -1,0 +1,344 @@
+.institution-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.institution-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+    .institution-header {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+}
+
+.institution-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.5rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.institution-subtitle {
+    color: var(--gray-500);
+    font-size: 1.125rem;
+}
+
+.institution-controls {
+    background: white;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-100);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (min-width: 1280px) {
+    .institution-controls {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.tabs-container {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.25rem;
+}
+
+.tab-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: var(--gray-500);
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.tab-button.active {
+    background-color: var(--primary-900);
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+@media (min-width: 1280px) {
+    .search-container {
+        width: 20rem;
+    }
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400);
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    background-color: var(--gray-50);
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-900);
+    outline: none;
+}
+
+.search-input:focus {
+    background-color: white;
+    box-shadow: 0 0 0 2px var(--primary-100);
+}
+
+.institution-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+    .institution-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .institution-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.anim-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.institution-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.institution-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-200);
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 10;
+}
+
+.icon-box {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+}
+
+.institution-card:hover .icon-box {
+    transform: scale(1.1);
+}
+
+.id-badge {
+    font-family: monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gray-400);
+    background-color: var(--gray-50);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--gray-100);
+}
+
+.card-content {
+    position: relative;
+    z-index: 10;
+    flex-grow: 1;
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-50);
+    margin-top: auto;
+}
+
+.student-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-600);
+}
+
+.count-label {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--gray-400);
+}
+
+.arrow-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s;
+}
+
+.institution-card:hover .arrow-icon {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Color Themes */
+/* Colleges (Blue) */
+.theme-colleges .icon-box,
+.theme-colleges .arrow-icon {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+
+.theme-colleges.institution-card:hover {
+    border-color: #dbeafe;
+}
+
+/* Programs (Purple) */
+.theme-programs .icon-box,
+.theme-programs .arrow-icon {
+    background-color: #f5f3ff;
+    color: #7c3aed;
+}
+
+.theme-programs.institution-card:hover {
+    border-color: #ede9fe;
+}
+
+/* Branches (Emerald/Green) */
+.theme-branches .icon-box,
+.theme-branches .arrow-icon {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.theme-branches.institution-card:hover {
+    border-color: #d1fae5;
+}
+
+/* Batches (Orange) */
+.theme-batches .icon-box,
+.theme-batches .arrow-icon {
+    background-color: #fff7ed;
+    color: #ea580c;
+}
+
+.theme-batches.institution-card:hover {
+    border-color: #ffedd5;
+}
+
+/* Gradient backgrounds */
+.card-bg-decoration {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8rem;
+    height: 8rem;
+    margin-top: -4rem;
+    margin-right: -4rem;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+}
+
+.institution-card:hover .card-bg-decoration {
+    opacity: 1;
+}
+
+.theme-colleges .card-bg-decoration {
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0) 70%);
+}
+
+.theme-programs .card-bg-decoration {
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, rgba(124, 58, 237, 0) 70%);
+}
+
+.theme-branches .card-bg-decoration {
+    background: radial-gradient(circle, rgba(5, 150, 105, 0.1) 0%, rgba(5, 150, 105, 0) 70%);
+}
+
+.theme-batches .card-bg-decoration {
+    background: radial-gradient(circle, rgba(234, 88, 12, 0.1) 0%, rgba(234, 88, 12, 0) 70%);
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    padding: 5rem 0;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 1.5rem;
+    border: 1px dashed var(--gray-200);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

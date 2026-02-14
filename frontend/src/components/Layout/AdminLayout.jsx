@@ -33,10 +33,7 @@ const AdminLayout = () => {
                                 <LayoutDashboard size={18} />
                                 <span>Dashboard</span>
                             </Link>
-                            <Link to="/admin/faculty" className={`nav-item ${location.pathname.includes('/admin/faculty') ? 'active' : ''}`}>
-                                <Users size={18} />
-                                <span>Faculty</span>
-                            </Link>
+
                             <Link to="/admin/attendance" className={`nav-item ${location.pathname.includes('/admin/attendance') ? 'active' : ''}`}>
                                 <Clock size={18} />
                                 <span>Attendance</span>
@@ -50,6 +47,10 @@ const AdminLayout = () => {
                             <Link to="/admin/institution" className={`nav-item ${location.pathname.includes('/admin/institution') ? 'active' : ''}`}>
                                 <Building2 size={18} />
                                 <span>Institution</span>
+                            </Link>
+                            <Link to="/admin/faculty" className={`nav-item ${location.pathname.includes('/admin/faculty') ? 'active' : ''}`}>
+                                <Users size={18} />
+                                <span>Faculty</span>
                             </Link>
                         </div>
                     </div>

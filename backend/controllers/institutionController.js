@@ -1,50 +1,51 @@
 const { masterPool } = require('../config/database');
 
-// Helper to get distinct values and counts
-const getStats = async (field) => {
-    // Ensuring basic injection safety by whitelisting fields not needed here as we use fixed strings, but good practice
-    // Query: SELECT field, COUNT(*) FROM students GROUP BY field
-    const query = `
-        SELECT ${field} as name, COUNT(*) as student_count 
-        FROM students 
-        WHERE ${field} IS NOT NULL AND ${field} != ''
-        GROUP BY ${field}
-        ORDER BY name
-    `;
-    const [rows] = await masterPool.query(query);
-    return rows;
-};
-
 exports.getInstitutionDetails = async (req, res) => {
     try {
         const type = req.query.type; // 'colleges', 'courses', 'branches'
 
-        let data = [];
+        const getColleges = async () => {
+            const [rows] = await masterPool.query('SELECT id, name FROM colleges ORDER BY name');
+            return rows;
+        };
+
+        const getCourses = async () => {
+            const [rows] = await masterPool.query('SELECT id, name FROM courses ORDER BY name');
+            return rows;
+        };
+
+        const getBranches = async () => {
+            const [rows] = await masterPool.query('SELECT id, name FROM course_branches ORDER BY name');
+            return rows;
+        };
+
         if (type === 'colleges') {
-            data = await getStats('college');
+            const data = await getColleges();
+            return res.json({ success: true, data });
         } else if (type === 'courses') {
-            data = await getStats('course');
+            const data = await getCourses();
+            return res.json({ success: true, data });
         } else if (type === 'branches') {
-            data = await getStats('branch');
-        } else {
-            // Default to returning all if no type specified
-            const colleges = await getStats('college');
-            const courses = await getStats('course');
-            const branches = await getStats('branch');
-            return res.json({
-                success: true,
-                data: {
-                    colleges,
-                    courses,
-                    branches
-                }
-            });
+            const data = await getBranches();
+            return res.json({ success: true, data });
         }
 
-        res.json({
+        // Default all
+        const [colleges, courses, branches] = await Promise.all([
+            getColleges(),
+            getCourses(),
+            getBranches()
+        ]);
+
+        return res.json({
             success: true,
-            data
+            data: {
+                colleges,
+                courses,
+                branches
+            }
         });
+
     } catch (error) {
         console.error('Error fetching institution details:', error);
         res.status(500).json({ success: false, message: 'Server Error' });

@@ -1,0 +1,287 @@
+@import './Institution.css';
+
+/* Override .faculty-page specific styles */
+.faculty-page {
+    padding-top: 0.5rem;
+}
+
+.faculty-page .institution-header {
+    margin-bottom: 1.5rem;
+}
+
+.faculty-page .institution-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+
+.faculty-page .institution-subtitle {
+    font-size: 0.875rem;
+    color: var(--gray-500);
+}
+
+.faculty-page .institution-card .card-header {
+    padding-bottom: 0px;
+    min-height: 1.5rem;
+    margin-bottom: 0px;
+}
+
+.faculty-page .institution-card .card-content {
+    padding-top: 0.1rem;
+}
+
+.faculty-page .institution-card h3.card-title {
+    font-size: 1.1rem;
+    min-height: auto;
+    margin-bottom: 0.25rem;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    backdrop-filter: blur(2px);
+}
+
+.modal-content {
+    background: white;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: slideIn 0.3s ease-out;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--gray-100);
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    font-family: 'Playfair Display', serif;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: var(--gray-600);
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px var(--primary-100);
+}
+
+.form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    background-color: white;
+    transition: all 0.2s;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--gray-100);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    z-index: 10;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--gray-200);
+    color: var(--gray-600);
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-ghost:hover {
+    background: var(--gray-50);
+    color: var(--gray-900);
+}
+
+.scope-section {
+    margin-bottom: 1.5rem;
+}
+
+.scope-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px dashed var(--gray-200);
+}
+
+.scope-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+}
+
+.scope-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    cursor: pointer;
+}
+
+.scope-item input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--gray-300);
+    accent-color: var(--primary-600);
+    cursor: pointer;
+}
+
+/* Existing Theme Styles */
+/* Reuse existing theme styles... */
+.theme-faculty .icon-box,
+.theme-faculty .arrow-icon {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.theme-faculty.institution-card:hover {
+    border-color: #d1fae5;
+}
+
+.theme-faculty .card-bg-decoration {
+    background: radial-gradient(circle, rgba(5, 150, 105, 0.1) 0%, rgba(5, 150, 105, 0) 70%);
+}
+
+.theme-principals .icon-box,
+.theme-principals .arrow-icon {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.theme-principals.institution-card:hover {
+    border-color: #fee2e2;
+}
+
+.theme-principals .card-bg-decoration {
+    background: radial-gradient(circle, rgba(220, 38, 38, 0.1) 0%, rgba(220, 38, 38, 0) 70%);
+}
+
+.theme-aos .icon-box,
+.theme-aos .arrow-icon {
+    background-color: #f0fdf4;
+    color: #16a34a;
+}
+
+.theme-aos.institution-card:hover {
+    border-color: #dcfce7;
+}
+
+.theme-aos .card-bg-decoration {
+    background: radial-gradient(circle, rgba(22, 163, 74, 0.1) 0%, rgba(22, 163, 74, 0) 70%);
+}
+
+.theme-hods .icon-box,
+.theme-hods .arrow-icon {
+    background-color: #fff7ed;
+    color: #ea580c;
+}
+
+.theme-hods.institution-card:hover {
+    border-color: #ffedd5;
+}
+
+.theme-hods .card-bg-decoration {
+    background: radial-gradient(circle, rgba(234, 88, 12, 0.1) 0%, rgba(234, 88, 12, 0) 70%);
+}
+
+.theme-staff .icon-box,
+.theme-staff .arrow-icon {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+
+.theme-staff.institution-card:hover {
+    border-color: #dbeafe;
+}
+
+.theme-staff .card-bg-decoration {
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0) 70%);
+}
