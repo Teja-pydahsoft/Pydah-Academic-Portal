@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150">
+  <!-- White Background -->
+  <rect width="300" height="150" fill="white" rx="15" ry="15"/>
+  
+  <!-- Rounded Orange Frame -->
+  <path d="M40 20 H 260 A 20 20 0 0 1 280 40 V 100 A 20 20 0 0 1 260 120 H 40 A 20 20 0 0 1 20 100 V 40 A 20 20 0 0 1 40 20 Z" fill="none" stroke="#FF6B00" stroke-width="5"/>
+  
+  <!-- Three Dots -->
+  <circle cx="60" cy="45" r="14" fill="#FFD700" opacity="0.9" />
+  <circle cx="80" cy="38" r="9" fill="#FF6B00" opacity="0.9" />
+  <circle cx="92" cy="42" r="5" fill="#D32F2F" opacity="0.9" />
+
+  <!-- PYDAH Text -->
+  <text x="100" y="80" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="48" fill="#1A1A1A" letter-spacing="2">PYDAH</text>
+
+  <!-- GROUP Text -->
+  <text x="210" y="105" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-size="24" fill="#757575" letter-spacing="1">GROUP</text>
+
+  <!-- Tagline -->
+  <text x="150" y="140" font-family="'Brush Script MT', cursive" font-size="28" fill="#1A1A1A" text-anchor="middle" font-weight="bold">Education & Beyond</text>
+</svg>

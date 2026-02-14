@@ -4,6 +4,8 @@ import { useAuth } from '../../context/AuthContext';
 import { LayoutDashboard, Users, BookOpen, Clock, FileText, Settings, LogOut, MessageSquare, ChevronRight, Building2, GraduationCap, Layers } from 'lucide-react';
 
 
+import logo from '../../assets/logo.png';
+
 const AdminLayout = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -16,11 +18,9 @@ const AdminLayout = () => {
             {/* Sidebar - Premium Dark/Olive Theme */}
             <aside className="sidebar">
                 {/* Logo Area */}
-                <div className="sidebar-header">
-                    <div className="logo-box">P</div>
-                    <div>
-                        <h1 className="font-display" style={{ fontSize: '18px', margin: 0, lineHeight: 1, color: 'white' }}>Pydah</h1>
-                        <p style={{ fontSize: '10px', color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '2px', marginTop: '4px' }}>Portal V2</p>
+                <div className="sidebar-header justify-center py-4 px-4">
+                    <div className="logo-highlight">
+                        <img src={logo} className="w-28 h-auto" alt="Pydah Group" />
                     </div>
                 </div>
 

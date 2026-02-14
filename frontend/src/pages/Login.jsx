@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Lock, User } from 'lucide-react';
 
+import logo from '../assets/logo.png';
+
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -28,7 +30,9 @@ const Login = () => {
                 <div className="hero-overlay"></div>
 
                 <div className="hero-content">
-                    <div className="hero-logo">P</div>
+                    <div className="logo-highlight mb-12">
+                        <img src={logo} className="w-64 h-auto" alt="Pydah Group" />
+                    </div>
                     <h1 className="hero-title">
                         Academic <br /> <span style={{ color: 'var(--accent-400)' }}>Excellence</span>
                     </h1>

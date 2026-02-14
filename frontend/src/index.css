@@ -538,3 +538,67 @@ h6 {
     opacity: 1;
   }
 }
+
+/* --- Logo Highlighting --- */
+/* --- Logo Highlighting --- */
+.logo-highlight {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1.25rem 2rem;
+  border-radius: 1.5rem;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1),
+    0 0 1px 1px rgba(255, 255, 255, 0.5) inset;
+  backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-highlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+}
+
+.logo-highlight:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.sidebar .logo-highlight {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: auto;
+  min-width: unset;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.sidebar .logo-highlight:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: none;
+  box-shadow: none;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar .logo-highlight img {
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+  width: 110px;
+  height: auto;
+}
