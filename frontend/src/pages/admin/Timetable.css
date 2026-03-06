@@ -1,0 +1,207 @@
+.timetable-page {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.timetable-filters {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.timetable-grid-wrapper {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 300px);
+}
+
+.timetable-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+}
+
+.timetable-table th {
+    background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    padding: 1rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-weight: 600;
+    color: #374151;
+}
+
+.timetable-table th:first-child {
+    background: #f3f4f6;
+    left: 0;
+    z-index: 20;
+    width: 100px;
+}
+
+.timetable-table td.day-cell {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #4b5563;
+    text-align: center;
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    border-right: 2px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.timetable-table td.slot-cell {
+    border: 1px solid #e5e7eb;
+    padding: 0;
+    height: 100px;
+    position: relative;
+    vertical-align: top;
+    transition: background 0.2s;
+}
+
+.timetable-table td.slot-cell:hover {
+    background: #f8fafc;
+}
+
+.slot-content {
+    padding: 0.5rem;
+    width: 100%;
+    height: 100%;
+    min-height: 100px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.slot-entry {
+    background: #eff6ff;
+    border-left: 3px solid #3b82f6;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.slot-entry.type-subject {
+    background: #eff6ff;
+    border-left-color: #3b82f6;
+}
+
+.slot-entry.type-lab {
+    background: #f0fdf4;
+    border-left-color: #22c55e;
+}
+
+.slot-entry.type-break {
+    background: #fef3c7;
+    border-left-color: #f59e0b;
+    align-items: center;
+    color: #b45309;
+    font-weight: 600;
+}
+
+.slot-entry.type-other {
+    background: #f3f4f6;
+    border-left-color: #6b7280;
+}
+
+.slot-subject {
+    font-weight: 600;
+    color: #1e3a8a;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+
+.type-lab .slot-subject {
+    color: #14532d;
+}
+
+.slot-code {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.slot-empty {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.slot-cell:hover .slot-empty {
+    opacity: 1;
+}
+
+.remove-slot-btn {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    padding: 0.25rem;
+    background: white;
+    border-radius: 50%;
+    color: #ef4444;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.slot-entry:hover .remove-slot-btn {
+    opacity: 1;
+}
+
+.remove-slot-btn:hover {
+    background: #fee2e2;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.anim-fade-in-up {
+    animation: fadeInUp 0.4s ease-out forwards;
+}
+
+.timetable-filters select,
+.timetable-filters input {
+    transition: all 0.2s;
+}
+
+.timetable-filters select:hover,
+.timetable-filters input:hover {
+    border-color: #3b82f6;
+    background-color: #fff;
+}

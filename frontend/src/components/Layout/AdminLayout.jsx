@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LayoutDashboard, Users, BookOpen, Clock, FileText, Settings, LogOut, MessageSquare, ChevronRight, Building2, GraduationCap, Layers } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, Clock, FileText, Settings, LogOut, MessageSquare, ChevronRight, Building2, GraduationCap, Layers, Scroll } from 'lucide-react';
 
 
 import logo from '../../assets/logo.png';
@@ -33,11 +33,6 @@ const AdminLayout = () => {
                                 <LayoutDashboard size={18} />
                                 <span>Dashboard</span>
                             </Link>
-
-                            <Link to="/admin/attendance" className={`nav-item ${location.pathname.includes('/admin/attendance') ? 'active' : ''}`}>
-                                <Clock size={18} />
-                                <span>Attendance</span>
-                            </Link>
                         </div>
                     </div>
 
@@ -58,9 +53,21 @@ const AdminLayout = () => {
                     <div style={{ marginBottom: '24px' }}>
                         <p className="nav-label">Academics</p>
                         <div className="flex-col gap-2">
+                            <Link to="/admin/regulations" className={`nav-item ${location.pathname.includes('/admin/regulations') ? 'active' : ''}`}>
+                                <Scroll size={18} />
+                                <span>Regulations</span>
+                            </Link>
                             <Link to="/admin/subjects" className={`nav-item ${location.pathname.includes('/admin/subjects') ? 'active' : ''}`}>
                                 <BookOpen size={18} />
                                 <span>Subjects</span>
+                            </Link>
+                            <Link to="/admin/timetable" className={`nav-item ${location.pathname.includes('/admin/timetable') ? 'active' : ''}`}>
+                                <FileText size={18} />
+                                <span>Timetable</span>
+                            </Link>
+                            <Link to="/admin/attendance" className={`nav-item ${location.pathname.includes('/admin/attendance') ? 'active' : ''}`}>
+                                <Clock size={18} />
+                                <span>Attendance</span>
                             </Link>
                         </div>
                     </div>

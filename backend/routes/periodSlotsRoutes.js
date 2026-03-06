@@ -4,5 +4,8 @@ const controller = require('../controllers/periodSlotsController');
 const { authenticateToken } = require('../middleware/auth');
 
 router.get('/', authenticateToken, controller.getAllSlots);
+router.post('/', authenticateToken, controller.createSlot);
+router.put('/:id', authenticateToken, controller.updateSlot);
+router.delete('/:id', authenticateToken, controller.deleteSlot);
 
 module.exports = router;

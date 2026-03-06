@@ -39,6 +39,7 @@ const timetableRoutes = require('./routes/timetableRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const institutionRoutes = require('./routes/institutionRoutes');
+const regulationsRoutes = require('./routes/regulationsRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/faculty', facultyRoutes);
@@ -51,6 +52,7 @@ app.use('/api/academic-content', academicContentRoutes);
 app.use('/api/internal-marks', internalMarksRoutes);
 app.use('/api/timetable', timetableRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/regulations', regulationsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

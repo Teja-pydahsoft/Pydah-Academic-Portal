@@ -12,6 +12,8 @@ const FacultyManagement = lazy(() => import('./pages/admin/FacultyManagement'));
 const AttendanceMonitoring = lazy(() => import('./pages/admin/AttendanceMonitoring'));
 const Institution = lazy(() => import('./pages/admin/Institution'));
 const Subjects = lazy(() => import('./pages/admin/Subjects'));
+const Timetable = lazy(() => import('./pages/admin/Timetable'));
+const Regulations = lazy(() => import('./pages/admin/Regulations'));
 
 function PrivateRoute({ children, allowedRoles }) {
     const { user, loading } = useAuth();
@@ -44,6 +46,8 @@ function App() {
                         <Route path="programs" element={<Institution initialTab="programs" />} />
                         <Route path="batches" element={<Institution initialTab="batches" />} />
                         <Route path="subjects" element={<Subjects />} />
+                        <Route path="timetable" element={<Timetable />} />
+                        <Route path="regulations" element={<Regulations />} />
                     </Route>
 
                     <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
