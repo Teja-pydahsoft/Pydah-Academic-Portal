@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
-import { Plus, Search, Edit, Trash2, BookOpen, FlaskConical, Presentation, X } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, BookOpen, FlaskConical, Presentation, X, Users, UserPlus } from 'lucide-react';
 import './Subjects.css';
 import '../admin/Faculty.css';
 
@@ -16,6 +16,15 @@ const Subjects = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [saving, setSaving] = useState(false);
+
+    // Faculty Assignment State
+    const [showFacultyModal, setShowFacultyModal] = useState(false);
+    const [selectedFacultySubject, setSelectedFacultySubject] = useState(null);
+    const [hrmsEmployees, setHrmsEmployees] = useState([]);
+    const [assignedFaculties, setAssignedFaculties] = useState([]);
+    const [assignmentBatch, setAssignmentBatch] = useState('');
+    const [assignmentEmployeeId, setAssignmentEmployeeId] = useState('');
+    const [facultyLoading, setFacultyLoading] = useState(false);
 
     // Page-level filter state
     const [filter, setFilter] = useState({
@@ -59,10 +68,37 @@ const Subjects = () => {
         formRegulation ? String(b.course_id) === String(formRegulation.course_id) : false
     );
 
+    // Employee Search State
+    const [employeeSearchQuery, setEmployeeSearchQuery] = useState('');
+
     useEffect(() => {
         fetchRegulations();
         fetchInstitutionData();
     }, []);
+
+    useEffect(() => {
+        if (showFacultyModal) {
+            fetchHrmsEmployees('');
+        }
+    }, [showFacultyModal]);
+
+    const fetchHrmsEmployees = async (searchQuery = '') => {
+        try {
+            const resp = await api.get(`/hrms/employees?q=${encodeURIComponent(searchQuery)}`);
+            if (resp.data.success) {
+                setHrmsEmployees(resp.data.data);
+                // Also reset selected employee if searching newly
+                if (searchQuery) {
+                    setAssignmentEmployeeId('');
+                }
+            }
+        } catch (err) { console.error('Failed to fetch HRMS employees:', err); }
+    };
+
+    const handleEmployeeSearch = (e) => {
+        e.preventDefault();
+        fetchHrmsEmployees(employeeSearchQuery);
+    };
 
     useEffect(() => {
         if (filter.regulation_id) fetchSubjects();
@@ -196,6 +232,71 @@ const Subjects = () => {
         }
     };
 
+    // Faculty Assignment Functions
+    const openFacultyModal = (subject) => {
+        setSelectedFacultySubject(subject);
+        setAssignmentBatch('');
+        setAssignmentEmployeeId('');
+        setShowFacultyModal(true);
+        fetchAssignedFaculties(subject.id, '');
+    };
+
+    const fetchAssignedFaculties = async (subjectId, batch) => {
+        setFacultyLoading(true);
+        try {
+            const params = new URLSearchParams({ subject_id: subjectId });
+            if (batch) params.set('batch', batch);
+            const resp = await api.get(`/faculty-subjects?${params}`);
+            if (resp.data.success) {
+                setAssignedFaculties(resp.data.data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch assigned faculty:', err);
+        } finally {
+            setFacultyLoading(false);
+        }
+    };
+
+    const handleBatchChangeForFaculty = (e) => {
+        const newBatch = e.target.value;
+        setAssignmentBatch(newBatch);
+        if (selectedFacultySubject) {
+            fetchAssignedFaculties(selectedFacultySubject.id, newBatch);
+        }
+    };
+
+    const handleAssignFaculty = async (e) => {
+        e.preventDefault();
+        if (!assignmentEmployeeId) return alert('Please select an employee');
+        setSaving(true);
+        try {
+            const payload = {
+                employee_id: assignmentEmployeeId,
+                subject_id: selectedFacultySubject.id,
+                batch: assignmentBatch || null
+            };
+            await api.post('/faculty-subjects', payload);
+            setAssignmentEmployeeId('');
+            fetchAssignedFaculties(selectedFacultySubject.id, assignmentBatch);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to assign faculty (Workload constraint likely violated)');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleUnassignFaculty = async (assignmentId) => {
+        if (!window.confirm('Remove this faculty assignment?')) return;
+        setFacultyLoading(true);
+        try {
+            await api.delete(`/faculty-subjects/${assignmentId}`);
+            fetchAssignedFaculties(selectedFacultySubject.id, assignmentBatch);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to unassign');
+            setFacultyLoading(false);
+        }
+    };
+
     const filtered = subjects.filter(s =>
         !searchTerm ||
         s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -213,83 +314,98 @@ const Subjects = () => {
     }, {});
 
     return (
-        <div className="page-container">
-            <div className="page-header">
+        <div className="page-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div className="page-header" style={{ marginBottom: '24px' }}>
                 <div>
-                    <h1 className="page-title font-display">Subject Directory</h1>
-                    <p className="page-subtitle">Manage curriculum subjects across branches and semesters.</p>
+                    <h1 className="page-title font-display" style={{ fontSize: '24px', fontWeight: '700', color: '#111827' }}>Subject Directory</h1>
+                    <p className="page-subtitle" style={{ color: '#6b7280', marginTop: '4px' }}>Manage curriculum subjects across branches and semesters.</p>
                 </div>
                 {filter.regulation_id && (
-                    <button className="btn btn-primary" onClick={openCreateModal}>
+                    <button className="btn btn-primary" onClick={openCreateModal} style={{ whiteSpace: 'nowrap' }}>
                         <Plus size={16} /> Add Subject
                     </button>
                 )}
             </div>
 
             {/* Filters */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px', alignItems: 'center' }}>
-                <select
-                    name="regulation_id"
-                    value={filter.regulation_id}
-                    onChange={handleFilterChange}
-                    className="form-select"
-                    style={{ minWidth: '200px' }}
-                >
-                    <option value="">Select Regulation</option>
-                    {regulations.map(r => (
-                        <option key={r.id} value={r.id}>{r.name} — {r.course_name} ({r.college_name})</option>
-                    ))}
-                </select>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '24px', alignItems: 'center', background: '#fff', padding: '16px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
+                <div style={{ flex: '1 1 200px' }}>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>Regulation</label>
+                    <select
+                        name="regulation_id"
+                        value={filter.regulation_id}
+                        onChange={handleFilterChange}
+                        className="form-select"
+                        style={{ width: '100%' }}
+                    >
+                        <option value="">Select Regulation</option>
+                        {regulations.map(r => (
+                            <option key={r.id} value={r.id}>{r.name} — {r.course_name} ({r.college_name})</option>
+                        ))}
+                    </select>
+                </div>
 
-                <select
-                    name="branch_id"
-                    value={filter.branch_id}
-                    onChange={handleFilterChange}
-                    className="form-select"
-                    style={{ minWidth: '160px' }}
-                    disabled={!filter.regulation_id || pageBranches.length === 0}
-                >
-                    <option value="">All Branches</option>
-                    {pageBranches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-                </select>
+                <div style={{ flex: '1 1 180px' }}>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>Branch</label>
+                    <select
+                        name="branch_id"
+                        value={filter.branch_id}
+                        onChange={handleFilterChange}
+                        className="form-select"
+                        style={{ width: '100%' }}
+                        disabled={!filter.regulation_id || pageBranches.length === 0}
+                    >
+                        <option value="">All Branches</option>
+                        {pageBranches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                    </select>
+                </div>
 
-                <select
-                    name="year_of_study"
-                    value={filter.year_of_study}
-                    onChange={handleFilterChange}
-                    className="form-select"
-                    style={{ maxWidth: '140px' }}
-                    disabled={!filter.regulation_id}
-                >
-                    <option value="">All Years</option>
-                    {Array.from({ length: totalYears }, (_, i) => i + 1).map(y => (
-                        <option key={y} value={y}>Year {y}</option>
-                    ))}
-                </select>
+                <div style={{ flex: '0 1 120px' }}>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>Year</label>
+                    <select
+                        name="year_of_study"
+                        value={filter.year_of_study}
+                        onChange={handleFilterChange}
+                        className="form-select"
+                        style={{ width: '100%' }}
+                        disabled={!filter.regulation_id}
+                    >
+                        <option value="">All</option>
+                        {Array.from({ length: totalYears }, (_, i) => i + 1).map(y => (
+                            <option key={y} value={y}>Year {y}</option>
+                        ))}
+                    </select>
+                </div>
 
-                <select
-                    name="semester_number"
-                    value={filter.semester_number}
-                    onChange={handleFilterChange}
-                    className="form-select"
-                    style={{ maxWidth: '150px' }}
-                    disabled={!filter.regulation_id}
-                >
-                    <option value="">All Sems</option>
-                    {Array.from({ length: totalSems }, (_, i) => i + 1).map(s => (
-                        <option key={s} value={s}>Sem {s}</option>
-                    ))}
-                </select>
+                <div style={{ flex: '0 1 120px' }}>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>Semester</label>
+                    <select
+                        name="semester_number"
+                        value={filter.semester_number}
+                        onChange={handleFilterChange}
+                        className="form-select"
+                        style={{ width: '100%' }}
+                        disabled={!filter.regulation_id}
+                    >
+                        <option value="">All</option>
+                        {Array.from({ length: totalSems }, (_, i) => i + 1).map(s => (
+                            <option key={s} value={s}>Sem {s}</option>
+                        ))}
+                    </select>
+                </div>
 
-                <div className="search-box" style={{ marginLeft: 'auto' }}>
-                    <Search size={16} />
-                    <input
-                        type="text"
-                        placeholder="Search subjects..."
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                        className="search-input"
-                    />
+                <div style={{ flex: '2 1 250px', marginLeft: 'auto' }}>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>Search</label>
+                    <div className="search-box" style={{ width: '100%', margin: 0 }}>
+                        <Search size={16} />
+                        <input
+                            type="text"
+                            placeholder="Search subjects..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -336,27 +452,55 @@ const Subjects = () => {
                                 <h3 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>{semKey}</h3>
                                 <div className="subjects-grid">
                                     {semSubjects.map(subject => (
-                                        <div key={subject.id} className="subject-card">
-                                            <div className="subject-card-header">
-                                                <div className={`subject-icon-wrap ${subject.subject_type === 'lab' ? 'lab' : 'theory'}`}>
-                                                    {subject.subject_type === 'lab' ? <FlaskConical size={18} /> : <Presentation size={18} />}
+                                        <div key={subject.id} className="subject-card anim-fade-in-up">
+                                            <div className="subject-header">
+                                                <div>
+                                                    <h3 className="subject-title">{subject.name}</h3>
+                                                    {subject.code && <span className="subject-code">{subject.code}</span>}
                                                 </div>
                                                 <div className="subject-actions">
-                                                    <button className="icon-btn" onClick={() => openEditModal(subject)}><Edit size={14} /></button>
-                                                    <button className="icon-btn danger" onClick={() => handleDelete(subject)}><Trash2 size={14} /></button>
+                                                    <button className="action-btn" title="Manage Faculty" onClick={() => openFacultyModal(subject)}>
+                                                        <Users size={16} />
+                                                    </button>
+                                                    <button className="action-btn edit" title="Edit Subject" onClick={() => openEditModal(subject)}>
+                                                        <Edit size={16} />
+                                                    </button>
+                                                    <button className="action-btn delete" title="Delete Subject" onClick={() => handleDelete(subject)}>
+                                                        <Trash2 size={16} />
+                                                    </button>
                                                 </div>
                                             </div>
-                                            <h3 className="subject-name">{subject.name}</h3>
-                                            <div className="subject-meta">
-                                                {subject.code && <span className="badge badge-gray">{subject.code}</span>}
-                                                <span className={`badge ${subject.subject_type === 'lab' ? 'badge-lab' : 'badge-theory'}`}>
-                                                    {subject.subject_type === 'lab' ? 'LAB' : 'THEORY'}
+                                            
+                                            <div className="subject-details">
+                                                <span className={`subject-badge ${subject.subject_type === 'lab' ? 'badge-lab' : 'badge-theory'}`}>
+                                                    {subject.subject_type === 'lab' ? (
+                                                        <><FlaskConical size={12} style={{marginRight: '4px'}}/> LAB</>
+                                                    ) : (
+                                                        <><Presentation size={12} style={{marginRight: '4px'}}/> THEORY</>
+                                                    )}
                                                 </span>
+                                                {subject.credits && (
+                                                    <div className="detail-item">
+                                                        <BookOpen size={14} />
+                                                        <span>{subject.credits} Credits</span>
+                                                    </div>
+                                                )}
+                                                {subject.subject_type === 'theory' && subject.units && (
+                                                    <div className="detail-item">
+                                                        <Presentation size={14} />
+                                                        <span>{subject.units} Units</span>
+                                                    </div>
+                                                )}
+                                                {subject.subject_type === 'lab' && subject.experiments_count && (
+                                                    <div className="detail-item">
+                                                        <FlaskConical size={14} />
+                                                        <span>{subject.experiments_count} Exps</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <div className="subject-stats">
-                                                {subject.credits && <span className="subject-stat"><BookOpen size={12} /> {subject.credits} Cr</span>}
-                                                {subject.subject_type === 'theory' && subject.units && <span className="subject-stat"><Presentation size={12} /> {subject.units} Units</span>}
-                                                {subject.subject_type === 'lab' && subject.experiments_count && <span className="subject-stat"><FlaskConical size={12} /> {subject.experiments_count} Exp</span>}
+                                            
+                                            <div className="subject-footer">
+                                                <span className="branch-name">{branchName === 'General (No Branch)' ? 'General Core' : branchName}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -481,6 +625,131 @@ const Subjects = () => {
                                 )}
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+            {/* Faculty Assignment Modal */}
+            {showFacultyModal && selectedFacultySubject && (
+                <div className="modal-overlay" onClick={() => setShowFacultyModal(false)}>
+                    <div className="modal-content" style={{ maxWidth: '600px' }} onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <div>
+                                <h3 className="modal-title font-display">Manage Faculty</h3>
+                                <p className="text-sm text-gray-500 mt-1">{selectedFacultySubject.name} ({selectedFacultySubject.code || 'No Code'})</p>
+                            </div>
+                            <button type="button" className="modal-close" onClick={() => setShowFacultyModal(false)}>
+                                <X size={24} />
+                            </button>
+                        </div>
+                        
+                        <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+                            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                                <h4 className="text-sm font-semibold text-gray-700 mb-3">Assign New Faculty</h4>
+                                
+                                <form onSubmit={handleEmployeeSearch} className="mb-4 flex gap-2">
+                                    <div className="relative flex-1">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                                        <input
+                                            type="text"
+                                            placeholder="Search HRMS ID or Name..."
+                                            value={employeeSearchQuery}
+                                            onChange={e => setEmployeeSearchQuery(e.target.value)}
+                                            className="form-input pl-9 text-sm w-full py-2"
+                                            style={{ height: '36px' }}
+                                        />
+                                    </div>
+                                    <button type="submit" className="btn btn-outline" style={{ height: '36px', padding: '0 12px' }}>
+                                        Search
+                                    </button>
+                                </form>
+
+                                <form onSubmit={handleAssignFaculty} className="flex flex-col gap-3">
+                                    <div className="flex gap-3">
+                                        <div className="flex-[1]">
+                                            <label className="block text-xs text-gray-500 mb-1">Batch (Optional)</label>
+                                            <input 
+                                                type="text" 
+                                                placeholder="e.g. 2022" 
+                                                value={assignmentBatch}
+                                                onChange={handleBatchChangeForFaculty}
+                                                className="form-input text-sm py-1.5"
+                                            />
+                                        </div>
+                                        <div className="flex-[2]">
+                                            <label className="block text-xs text-gray-500 mb-1">Select HRMS Employee *</label>
+                                            <select 
+                                                value={assignmentEmployeeId}
+                                                onChange={e => setAssignmentEmployeeId(e.target.value)}
+                                                className="form-select text-sm py-1.5"
+                                                required
+                                                disabled={hrmsEmployees.length === 0}
+                                            >
+                                                <option value="">-- {hrmsEmployees.length === 0 ? "No employees found" : "Choose Employee"} --</option>
+                                                {hrmsEmployees.map(emp => (
+                                                    <option key={emp._id} value={emp._id}>
+                                                        {emp.employee_name} {emp.emp_no ? `(${emp.emp_no})` : ''} - {emp.department || 'N/A'}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button type="submit" className="btn btn-primary w-full justify-center mt-2" disabled={saving || !assignmentEmployeeId}>
+                                        <UserPlus size={16} /> {saving ? 'Assigning...' : 'Assign Faculty'}
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div>
+                                <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center justify-between">
+                                    <span>Current Assignments {assignmentBatch ? `(Batch: ${assignmentBatch})` : '(All)'}</span>
+                                    <span className="text-xs font-normal text-gray-400">{assignedFaculties.length} total</span>
+                                </h4>
+                                
+                                {facultyLoading ? (
+                                    <div className="text-center py-4 text-sm text-gray-400">Loading assignments...</div>
+                                ) : assignedFaculties.length === 0 ? (
+                                    <div className="text-center py-6 bg-gray-50 rounded border border-dashed border-gray-200 text-sm text-gray-500">
+                                        No faculty assigned to this subject/batch yet.
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col gap-2">
+                                        {assignedFaculties.map((assignment) => (
+                                            <div key={assignment.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-blue-200 transition-colors bg-white shadow-sm">
+                                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary-100), var(--primary-200))', color: 'var(--primary-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px', border: '2px solid white', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                                                        {assignment.employee_name ? assignment.employee_name.substring(0, 2).toUpperCase() : 'NA'}
+                                                    </div>
+                                                    <div>
+                                                        <h5 style={{ fontSize: '14px', fontWeight: 600, color: '#111827', margin: 0 }}>
+                                                            {assignment.employee_name || 'Unknown Faculty'}
+                                                        </h5>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', fontSize: '12px', color: '#6b7280' }}>
+                                                            {assignment.emp_no ? <span className="font-mono text-[11px] bg-gray-100 px-1 rounded">{assignment.emp_no}</span> : null}
+                                                            <span>•</span>
+                                                            <span>{assignment.department || 'No Dept'}</span>
+                                                        </div>
+                                                        {assignment.batch && (
+                                                            <div style={{ marginTop: '6px' }}>
+                                                                <span style={{ fontSize: '10px', fontWeight: 600, padding: '2px 6px', background: '#eff6ff', color: '#2563eb', borderRadius: '4px', border: '1px solid #bfdbfe' }}>
+                                                                    Batch: {assignment.batch}
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <button 
+                                                    onClick={() => handleUnassignFaculty(assignment.id)}
+                                                    className="icon-btn danger p-2 hover:bg-red-50 rounded-full transition-colors"
+                                                    title="Remove Assignment"
+                                                >
+                                                    <Trash2 size={16} className="text-red-500" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

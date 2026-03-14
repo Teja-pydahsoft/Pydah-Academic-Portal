@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import { Plus, Edit, Trash2, X, Users, BookOpen, ChevronDown, ChevronRight } from 'lucide-react';
 import '../admin/Faculty.css';
+import './Subjects.css';
 
 const Regulations = () => {
     const [regulations, setRegulations] = useState([]);
@@ -150,30 +151,33 @@ const Regulations = () => {
     }, {});
 
     return (
-        <div className="page-container">
-            <div className="page-header">
+        <div className="page-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div className="page-header" style={{ marginBottom: '24px' }}>
                 <div>
-                    <h1 className="page-title font-display">Curriculum Regulations</h1>
-                    <p className="page-subtitle">Manage syllabus regulations and assign them to student batches</p>
+                    <h1 className="page-title font-display" style={{ fontSize: '24px', fontWeight: '700', color: '#111827' }}>Curriculum Regulations</h1>
+                    <p className="page-subtitle" style={{ color: '#6b7280', marginTop: '4px' }}>Manage syllabus regulations and assign them to student batches</p>
                 </div>
-                <button className="btn btn-primary" onClick={openCreateModal}>
+                <button className="btn btn-primary" onClick={openCreateModal} style={{ whiteSpace: 'nowrap' }}>
                     <Plus size={16} /> New Regulation
                 </button>
             </div>
 
-            {/* Page Filters */}
-            <div className="filter-bar" style={{ marginBottom: '24px' }}>
-                <select
-                    value={filterCollege}
-                    onChange={e => setFilterCollege(e.target.value)}
-                    className="form-select"
-                    style={{ maxWidth: '240px' }}
-                >
-                    <option value="">All Colleges</option>
-                    {institutionData.colleges.map(c => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                </select>
+            {/* Filters */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '24px', alignItems: 'center', background: '#fff', padding: '16px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
+                <div style={{ flex: '1 1 200px' }}>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>College Filter</label>
+                    <select
+                        value={filterCollege}
+                        onChange={e => setFilterCollege(e.target.value)}
+                        className="form-select"
+                        style={{ width: '100%' }}
+                    >
+                        <option value="">All Colleges</option>
+                        {institutionData.colleges.map(c => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {/* Regulations List */}
@@ -194,36 +198,45 @@ const Regulations = () => {
                         </h2>
                         <div style={{ display: 'grid', gap: '12px' }}>
                             {regs.map(reg => (
-                                <div key={reg.id} className="card" style={{ padding: '20px 24px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div key={reg.id} className="card anim-fade-in-up" style={{ padding: '20px 24px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', background: '#fff' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'var(--primary-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '15px', flexShrink: 0 }}>
+                                            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--primary-50)', border: '1px solid var(--primary-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-700)', fontWeight: 700, fontSize: '16px', flexShrink: 0 }}>
                                                 {reg.name.substring(0, 2).toUpperCase()}
                                             </div>
                                             <div>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                                                    <h3 style={{ fontWeight: 700, fontSize: '16px', color: 'var(--gray-800)', margin: 0 }}>{reg.name}</h3>
-                                                    <span className="badge badge-info" style={{ fontSize: '11px' }}>{reg.course_name}</span>
-                                                    {reg.branch_name && <span className="badge badge-gray" style={{ fontSize: '11px' }}>{reg.branch_name}</span>}
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                                                    <h3 style={{ fontWeight: 700, fontSize: '16px', color: '#111827', margin: 0 }}>{reg.name}</h3>
+                                                    <span style={{ fontSize: '11px', fontWeight: 600, padding: '2px 8px', background: '#eff6ff', color: '#2563eb', borderRadius: '4px', border: '1px solid #bfdbfe' }}>
+                                                        {reg.course_name}
+                                                    </span>
+                                                    {reg.branch_name && (
+                                                        <span style={{ fontSize: '11px', fontWeight: 600, padding: '2px 8px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', border: '1px solid #e5e7eb' }}>
+                                                            {reg.branch_name}
+                                                        </span>
+                                                    )}
                                                 </div>
-                                                <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--gray-500)' }}>
-                                                    {reg.college_name}
-                                                    <span style={{ marginLeft: '10px', color: 'var(--gray-400)' }}>·</span>
-                                                    <span style={{ marginLeft: '10px' }}>{reg.total_years || 4} Years · {(reg.total_years || 4) * (reg.semesters_per_year || 2)} Semesters Total</span>
-                                                </p>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#6b7280' }}>
+                                                    <span style={{ fontWeight: 500, color: '#4b5563' }}>{reg.college_name}</span>
+                                                    <span style={{ color: '#d1d5db' }}>•</span>
+                                                    <span><BookOpen size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }}/> {reg.total_years || 4} Years</span>
+                                                    <span style={{ color: '#d1d5db' }}>•</span>
+                                                    <span>{(reg.total_years || 4) * (reg.semesters_per_year || 2)} Semesters</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                             <button
                                                 className="btn btn-outline"
-                                                style={{ fontSize: '13px', padding: '6px 14px', gap: '6px' }}
+                                                style={{ fontSize: '13px', padding: '6px 14px', gap: '6px', height: '36px' }}
                                                 onClick={() => openBatchModal(reg)}
                                                 title="Assign Batches"
                                             >
-                                                <Users size={14} /> Batches
+                                                <Users size={14} /> Assign Batches
                                             </button>
-                                            <button className="btn btn-outline" style={{ padding: '6px 10px' }} onClick={() => openEditModal(reg)}><Edit size={14} /></button>
-                                            <button className="btn btn-danger-outline" style={{ padding: '6px 10px' }} onClick={() => handleDeleteRegulation(reg.id)}><Trash2 size={14} /></button>
+                                            <div style={{ width: '1px', height: '24px', background: '#e5e7eb', margin: '0 4px' }}></div>
+                                            <button className="icon-btn" style={{ padding: '8px', color: '#6b7280', background: 'transparent', border: 'none', borderRadius: '6px', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => openEditModal(reg)} title="Edit Regulation"><Edit size={16} /></button>
+                                            <button className="icon-btn danger" style={{ padding: '8px', color: '#ef4444', background: 'transparent', border: 'none', borderRadius: '6px', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => handleDeleteRegulation(reg.id)} title="Delete Regulation"><Trash2 size={16} /></button>
                                         </div>
                                     </div>
                                 </div>

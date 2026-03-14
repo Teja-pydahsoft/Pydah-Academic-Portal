@@ -40,6 +40,8 @@ const chatRoutes = require('./routes/chatRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const institutionRoutes = require('./routes/institutionRoutes');
 const regulationsRoutes = require('./routes/regulationsRoutes');
+const hrmsRoutes = require('./routes/hrmsRoutes');
+const facultySubjectsRoutes = require('./routes/facultySubjectsRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/faculty', facultyRoutes);
@@ -53,6 +55,8 @@ app.use('/api/internal-marks', internalMarksRoutes);
 app.use('/api/timetable', timetableRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/regulations', regulationsRoutes);
+app.use('/api/hrms', hrmsRoutes);
+app.use('/api/faculty-subjects', facultySubjectsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -86,13 +90,18 @@ app.use((err, req, res, next) => {
 // Start server
 const startServer = async () => {
     try {
-        const { testConnection } = require('./config/database');
+        const { testConnection, connectHrmsDb } = require('./config/database');
         const isConnected = await testConnection();
+        const isHrmsConnected = await connectHrmsDb();
 
         if (isConnected) {
             console.log('✅ Database connected successfully');
         } else {
             console.warn('⚠️ Database connection failed - Starting in standalone mode (API may not work fully)');
+        }
+
+        if (!isHrmsConnected) {
+            console.warn('⚠️ HRMS MongoDB connection failed');
         }
 
         app.listen(PORT, () => {

@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const masterPool = mysql.createPool({
@@ -37,4 +38,24 @@ const testConnection = async () => {
   }
 };
 
-module.exports = { masterPool, stagingPool, testConnection };
+const connectHrmsDb = async () => {
+  try {
+    const mongoUri = process.env.HRMS_MONGO_URL;
+    if (!mongoUri) {
+        console.warn('⚠️ HRMS_MONGO_URL is not defined in .env');
+        return false;
+    }
+    
+    // Connect to HRMS MongoDB with read preference to secondary if available
+    await mongoose.connect(mongoUri, {
+        readPreference: 'secondaryPreferred' // We only need read-only access
+    });
+    console.log('✅ HRMS MongoDB connected successfully (Read Only)');
+    return true;
+  } catch (error) {
+    console.error('❌ HRMS MongoDB connection failed:', error.message);
+    return false;
+  }
+};
+
+module.exports = { masterPool, stagingPool, testConnection, connectHrmsDb, mongoose };
